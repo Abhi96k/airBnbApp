@@ -71,4 +71,15 @@ public class HotelServiceImpl implements HotelService {
         log.info("Hotel with id: {} deleted successfully", id);
         return true;
     }
+
+    @Override
+    public void activateHotel(Long hotelId) {
+        log.info("Activating hotel with id: {}", hotelId);
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + hotelId));
+        hotel.setActive(true);
+        hotelRepository.save(hotel);
+        //TOD0:crete inverntory for this hotel
+        log.info("Hotel with id: {} activated successfully", hotelId);
+    }
 }

@@ -22,6 +22,7 @@ public class HotelController {
         log.info("Hotel Created Successfully: {}", createdHotel);
         return new ResponseEntity<>(createdHotel, HttpStatus.CREATED);
     }
+
     @GetMapping("/{hotelId}")
     public ResponseEntity<HotelDto>getHotelById(@PathVariable Long hotelId){
         log.info("Get Hotel Request Received: {}", hotelId);
@@ -29,6 +30,7 @@ public class HotelController {
         log.info("Hotel Retrieved Successfully: {}", hotelDto);
         return new ResponseEntity<>(hotelDto, HttpStatus.OK);
     }
+
     @PutMapping("/{hotelId}")
     public ResponseEntity<HotelDto> updateHotel(@PathVariable Long hotelId, @RequestBody HotelDto hotelDto){
         log.info("Update Hotel Request Received: id={}, data={}", hotelId, hotelDto);
@@ -36,11 +38,20 @@ public class HotelController {
         log.info("Hotel Updated Successfully: {}", updatedHotel);
         return new ResponseEntity<>(updatedHotel, HttpStatus.OK);
     }
+
     @DeleteMapping("/{hotelId}")
     public ResponseEntity<Void> deleteHotelById(@PathVariable Long hotelId) {
         log.info("Delete Hotel Request Received: {}", hotelId);
         hotelService.deleteHotelById(hotelId);
         log.info("Hotel Deleted Successfully: id={}", hotelId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping("/{hotelId}/activate")
+    public ResponseEntity<Void> activateHotel(@PathVariable Long hotelId) {
+        log.info("Activate Hotel Request Received: {}", hotelId);
+        hotelService.activateHotel(hotelId);
+        log.info("Hotel Activated Successfully: id={}", hotelId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
