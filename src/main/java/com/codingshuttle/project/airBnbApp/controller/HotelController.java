@@ -29,4 +29,18 @@ public class HotelController {
         log.info("Hotel Retrieved Successfully: {}", hotelDto);
         return new ResponseEntity<>(hotelDto, HttpStatus.OK);
     }
+    @PutMapping("/{hotelId}")
+    public ResponseEntity<HotelDto> updateHotel(@PathVariable Long hotelId, @RequestBody HotelDto hotelDto){
+        log.info("Update Hotel Request Received: id={}, data={}", hotelId, hotelDto);
+        HotelDto updatedHotel = hotelService.updateHotel(hotelId, hotelDto);
+        log.info("Hotel Updated Successfully: {}", updatedHotel);
+        return new ResponseEntity<>(updatedHotel, HttpStatus.OK);
+    }
+    @DeleteMapping("/{hotelId}")
+    public ResponseEntity<Void> deleteHotelById(@PathVariable Long hotelId) {
+        log.info("Delete Hotel Request Received: {}", hotelId);
+        hotelService.deleteHotelById(hotelId);
+        log.info("Hotel Deleted Successfully: id={}", hotelId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
