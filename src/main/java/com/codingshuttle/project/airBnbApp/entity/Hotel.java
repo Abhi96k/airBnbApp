@@ -56,6 +56,9 @@ public class Hotel {
     @ManyToOne
     private User owner;
 
+    @OneToMany(mappedBy = "hotel") // mappedby represet the inverse side of the relationship
+    private List<Room> rooms;
+
 }
 
 // contact_info_address
