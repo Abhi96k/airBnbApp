@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class HotelServiceImpl implements HotelService {
     private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper;
+    private final InventoryService inventoryService;
 
     @Override
     public HotelDto CreateNewHotel(HotelDto hotelDto) {
@@ -61,13 +62,13 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public Boolean deleteHotelById(Long id) {
         log.info("Deleting hotel with id: {}", id);
-      boolean  exists= hotelRepository.existsById(id);
-        if (!exists) {
-            log.warn("Hotel with id: {} not found for deletion", id);
-            throw new ResourceNotFoundException("Hotel not found with id: " + id);
-        }
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + id));
+
+        // Delete future inventory for this hotel
+        inventoryService.deleteFutureInventoriesByHotel(hotel);
+
         hotelRepository.deleteById(id);
-        //TODO: deleted from future inventory from this hotel
         log.info("Hotel with id: {} deleted successfully", id);
         return true;
     }
@@ -79,7 +80,12 @@ public class HotelServiceImpl implements HotelService {
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + hotelId));
         hotel.setActive(true);
         hotelRepository.save(hotel);
-        //TOD0:crete inverntory for this hotel
+
+        // Create inventory for all rooms in this hotel (assuming done only once during activation)
+        for(var room: hotel.getRooms()){
+            inventoryService.initializeRoomForYear(room);
+        }
+
         log.info("Hotel with id: {} activated successfully", hotelId);
     }
 }
