@@ -4,9 +4,10 @@ import com.codingshuttle.project.airBnbApp.entity.Hotel;
 import com.codingshuttle.project.airBnbApp.entity.Room;
 
 public interface InventoryService {
-    void initializeRoomForYear(Room roomId);
 
-    void deleteFutureInventories(Room roomId);
+    void initializeRoomForYear(Room room);
+
+    void deleteFutureInventories(Room room);
 
     void deleteFutureInventoriesByHotel(Hotel hotel);
 }

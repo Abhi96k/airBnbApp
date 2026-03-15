@@ -1,17 +1,26 @@
 package com.codingshuttle.project.airBnbApp.dto;
 
 import com.codingshuttle.project.airBnbApp.entity.HotelContactInfo;
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
 import java.util.List;
 
 @Data
 public class HotelDto {
+
+    @NotBlank(message = "Hotel name is required")
     private String name;
+
+    @NotBlank(message = "City is required")
     private String city;
+
     private List<String> photos;
     private List<String> amenities;
-    private HotelContactInfo contactInfo;
-    private Boolean active;
 
+    @NotNull(message = "Contact info is required")
+    private HotelContactInfo contactInfo;
+
+    private Boolean active;
 }

@@ -12,7 +12,9 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table(name = "hotel")
+@Table(name = "hotel", indexes = {
+        @Index(name = "idx_hotel_city", columnList = "city")
+})
 public class Hotel {
 
     @Id
@@ -60,6 +62,3 @@ public class Hotel {
     private List<Room> rooms;
 
 }
-
-// contact_info_address
-// contact_info_phone_number it is not create a new only embed the column in hotel table

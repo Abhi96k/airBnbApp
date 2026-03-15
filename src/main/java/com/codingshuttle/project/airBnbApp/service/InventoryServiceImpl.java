@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,27 +22,29 @@ public class InventoryServiceImpl implements InventoryService {
     private final InventoryRepository inventoryRepository;
 
     @Override
-    public void initializeRoomForYear(Room roomId) {
-        log.info("Initializing inventory for room with id {}", roomId.getId());
-        LocalDate today= LocalDate.now();
-        LocalDate endDate=today.plusYears(1);
+    @Transactional
+    public void initializeRoomForYear(Room room) {
+        log.info("Initializing inventory for room with id {}", room.getId());
+        LocalDate today = LocalDate.now();
+        LocalDate endDate = today.plusYears(1);
 
-        for(LocalDate date=today; date.isBefore(endDate); date=date.plusDays(1)){
+        List<Inventory> inventoryList = new ArrayList<>();
+        for (LocalDate date = today; date.isBefore(endDate); date = date.plusDays(1)) {
             Inventory inventory = Inventory.builder()
-                    .hotel(roomId.getHotel())
-                    .room(roomId)
+                    .hotel(room.getHotel())
+                    .room(room)
                     .date(date)
                     .bookedCount(0)
-                    .totalCount(roomId.getTotalcount())
+                    .totalCount(room.getTotalCount())
                     .surgeFactor(BigDecimal.ONE)
-                    .price(roomId.getBasePrice())
-                    .city(roomId.getHotel().getCity())
+                    .price(room.getBasePrice())
+                    .city(room.getHotel().getCity())
                     .closed(false)
                     .build();
-            inventoryRepository.save(inventory);
+            inventoryList.add(inventory);
         }
-        log.info("Inventory initialized successfully for room with id {}", roomId.getId());
-
+        inventoryRepository.saveAll(inventoryList);
+        log.info("Inventory initialized successfully for room with id {}", room.getId());
     }
 
     @Override

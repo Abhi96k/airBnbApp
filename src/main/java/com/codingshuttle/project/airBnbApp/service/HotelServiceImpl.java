@@ -2,37 +2,37 @@ package com.codingshuttle.project.airBnbApp.service;
 
 import com.codingshuttle.project.airBnbApp.dto.HotelDto;
 import com.codingshuttle.project.airBnbApp.entity.Hotel;
+import com.codingshuttle.project.airBnbApp.entity.Room;
 import com.codingshuttle.project.airBnbApp.exception.ResourceNotFoundException;
 import com.codingshuttle.project.airBnbApp.repository.HotelRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class HotelServiceImpl implements HotelService {
+
     private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper;
     private final InventoryService inventoryService;
 
     @Override
-    public HotelDto CreateNewHotel(HotelDto hotelDto) {
+    @Transactional
+    public HotelDto createNewHotel(HotelDto hotelDto) {
         log.info("Creating new hotel with name: {}", hotelDto.getName());
-
-        Hotel hotelentity = modelMapper.map(hotelDto, Hotel.class);
-        hotelentity.setActive(false);
-        Hotel savedHotel = hotelRepository.save(hotelentity);
-        HotelDto hotelDtoResponse = modelMapper.map(savedHotel, HotelDto.class);
-
-
+        Hotel hotelEntity = modelMapper.map(hotelDto, Hotel.class);
+        hotelEntity.setActive(false);
+        Hotel savedHotel = hotelRepository.save(hotelEntity);
         log.info("Hotel created successfully with id: {}", savedHotel.getId());
-
-        return hotelDtoResponse;
+        return modelMapper.map(savedHotel, HotelDto.class);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public HotelDto getHotelById(Long id) {
         log.info("Fetching hotel with id: {}", id);
         Hotel hotel = hotelRepository.findById(id)
@@ -41,39 +41,30 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
+    @Transactional
     public HotelDto updateHotel(Long id, HotelDto hotelDto) {
         log.info("Updating hotel with id: {}", id);
         Hotel existingHotel = hotelRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + id)); //fetching the existance entity from database
-
-        log.info("existing : {}",existingHotel.getName());
-        log.info("existing id : {}",existingHotel.getId());
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + id));
         modelMapper.map(hotelDto, existingHotel);
-
-        //entity update with dto values
-
-
-
         Hotel updatedHotel = hotelRepository.save(existingHotel);
         log.info("Hotel updated successfully with id: {}", updatedHotel.getId());
         return modelMapper.map(updatedHotel, HotelDto.class);
     }
 
     @Override
-    public Boolean deleteHotelById(Long id) {
+    @Transactional
+    public void deleteHotelById(Long id) {
         log.info("Deleting hotel with id: {}", id);
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + id));
-
-        // Delete future inventory for this hotel
         inventoryService.deleteFutureInventoriesByHotel(hotel);
-
         hotelRepository.deleteById(id);
         log.info("Hotel with id: {} deleted successfully", id);
-        return true;
     }
 
     @Override
+    @Transactional
     public void activateHotel(Long hotelId) {
         log.info("Activating hotel with id: {}", hotelId);
         Hotel hotel = hotelRepository.findById(hotelId)
@@ -81,11 +72,9 @@ public class HotelServiceImpl implements HotelService {
         hotel.setActive(true);
         hotelRepository.save(hotel);
 
-        // Create inventory for all rooms in this hotel (assuming done only once during activation)
-        for(var room: hotel.getRooms()){
+        for (Room room : hotel.getRooms()) {
             inventoryService.initializeRoomForYear(room);
         }
-
         log.info("Hotel with id: {} activated successfully", hotelId);
     }
 }

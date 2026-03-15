@@ -13,13 +13,16 @@ import java.time.LocalDateTime;
 @Entity
 @Setter
 @Getter
-@Table(name = "inventory", uniqueConstraints = @UniqueConstraint(
-        name="unique_hotel_room_date",
-        columnNames = {
-                "hotel_id",
-                "room_id",
-                "date"
-        }))
+@Table(name = "inventory",
+        uniqueConstraints = @UniqueConstraint(
+                name = "unique_hotel_room_date",
+                columnNames = {"hotel_id", "room_id", "date"}
+        ),
+        indexes = {
+                @Index(name = "idx_inventory_date", columnList = "date"),
+                @Index(name = "idx_inventory_room_date", columnList = "room_id, date"),
+                @Index(name = "idx_inventory_hotel_date", columnList = "hotel_id, date")
+        })
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
