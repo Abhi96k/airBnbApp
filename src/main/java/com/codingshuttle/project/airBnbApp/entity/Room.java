@@ -44,8 +44,8 @@ public class Room {
     @Column(name = "amenity")
     private List<String> amenities;
 
-   @Column(nullable= false)
-    private Integer totalcount;
+    @Column(name = "totalcount", nullable = false)
+    private Integer totalCount;
 
 
     @Column(nullable= false)
