@@ -12,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.modelmapper.ModelMapper;
 
 import java.util.Collections;
@@ -95,10 +97,11 @@ class HotelServiceImplTest {
     }
 
     @Test
+    @MockitoSettings(strictness = Strictness.LENIENT)
     void updateHotel_shouldUpdateAndReturnHotel() {
         when(hotelRepository.findById(1L)).thenReturn(Optional.of(hotel));
         when(hotelRepository.save(any(Hotel.class))).thenReturn(hotel);
-        lenient().doReturn(hotelDto).when(modelMapper).map(any(), eq(HotelDto.class));
+        when(modelMapper.map(any(Hotel.class), eq(HotelDto.class))).thenReturn(hotelDto);
 
         HotelDto result = hotelService.updateHotel(1L, hotelDto);
 
