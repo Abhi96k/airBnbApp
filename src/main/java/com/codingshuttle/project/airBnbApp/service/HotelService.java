@@ -1,6 +1,7 @@
 package com.codingshuttle.project.airBnbApp.service;
 
 import com.codingshuttle.project.airBnbApp.dto.HotelDto;
+import com.codingshuttle.project.airBnbApp.dto.HotelInfoDto;
 
 
 public interface HotelService {
@@ -14,4 +15,5 @@ public interface HotelService {
 
     void activateHotel(Long hotelId);
 
+    HotelInfoDto getHotelInfoById(Long hotelId);
 }
