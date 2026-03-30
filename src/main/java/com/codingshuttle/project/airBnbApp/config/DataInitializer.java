@@ -67,6 +67,7 @@ public class DataInitializer implements CommandLineRunner {
                         .room(savedRoom)
                         .date(date)
                         .bookedCount(0) // Initially 0 booked
+                        .reservedCount(0)
                         .totalCount(savedRoom.getTotalcount())
                         .surgeFactor(BigDecimal.ONE)
                         .price(savedRoom.getBasePrice()) // price = basePrice * surgeFactor

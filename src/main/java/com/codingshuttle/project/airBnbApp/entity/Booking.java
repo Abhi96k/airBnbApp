@@ -3,10 +3,11 @@ package com.codingshuttle.project.airBnbApp.entity;
 
 import com.codingshuttle.project.airBnbApp.entity.enums.BookingStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +17,9 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "booking")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Booking {
 
     @Id
@@ -63,4 +67,7 @@ public class Booking {
             inverseJoinColumns = @JoinColumn(name = "guest_id")
     )
     private Set<Guest> guests;
+
+    @Column(nullable = false,precision = 19,scale = 2)
+    private BigDecimal amount;
 }
